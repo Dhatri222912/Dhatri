@@ -1,81 +1,70 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<ctype.h>
-#define SIZE 20
-struct stack
-{
+#include <stdio.h>
+#include <stdlib.h>
+#define size 5
+
+struct stack {
     int top;
-    char data[SIZE];
+    int data[size];
 };
-typedef struct stack STACK;
-void push(STACK *s,char item)
-{
-    s->data[++(s->top)]= item;
-}
-{   char pop(STACK *s)
-    return s->data[(s->top)--];
-}
-int preced(char symbol)
-{
-    switch (symbol)
-    {
-        case'+':
-        case'-':return 1;
-        case'*':
-        case'/':return 3;
-        case'^':return 5;
+typedef struct stack stack;
+
+void push(stack *s, int item) {
+    if (s->top == size - 1)
+        printf("Stack overflow\n");
+    else {
+        s->top += 1;
+        s->data[s->top] = item;
     }
 }
-void infix_to_postfix(STACK *s,char infix[SIZE])
-{
-    int i,j=0;
-    char symbol,postfix[SIZE],temp;
-    for(i=0;infix [i]!='\0';i++)
-    {
-        symbol=infix[i];
-        if(isalnum (symbol))
-            postfix [j++]=symbol;
-        else
-        {
-            switch(symbol)
-            {
-                case '(':push(s,symbol);
+
+void pop(stack *s) {
+    if (s->top == -1)
+        printf("Stack underflow\n");
+    else {
+        printf("\nElement popped is %d\n", s->data[s->top]);
+        s->top -= 1;
+    }
+}
+
+void display(stack *s) {
+    int i;
+    if (s->top == -1)
+        printf("\nStack is empty\n");
+    else {
+        printf("Stack contents:\n");
+        for (i = s->top; i >= 0; i--)
+            printf("%d\n", s->data[i]);
+    }
+}
+
+int main() {
+    int ch, item;
+    stack s;
+    s.top = -1;
+
+    while (1) {
+        printf("\n1. Push\n2. Pop\n3. Display\n4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &ch);
+
+        switch (ch) {
+            case 1:
+                printf("Enter element to be pushed: ");
+                scanf("%d", &item);
+                push(&s, item);
                 break;
-                case ')':temp=pop(s);
-                while(temp!='(')
-                {
-                    postfix[j++]= temp;
-                    temp=pop(s);
-                }
+            case 2:
+                pop(&s);
                 break;
-                case '+':
-                case '-':
-                case '*':
-                case '/':
-                case '^':if (s->top== -1 || s->data[s->top] =='(')
-                push (s,symbol);
-                else
-                {
-                    while (preced (s->data[s->top]) >= preced(symbol)&& s->top!=-1 && s->data[s->top]!='(')
-                        postfix[j++]= pop(s);
-                    push(s,symbol);
-                }
+            case 3:
+                display(&s);
                 break;
-                }
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
         }
     }
-    while(s->top!= -1)
-     postfix[j++]=pop(s);
-    postfix[j]= '\0';
-    printf("\n postfix expression is %s \n", postfix);
+
+    return 0;
 }
-    int main()
-    {
-        char infix[SIZE];
-        STACK s;
-        s.top=-1;
-        printf("\n Enter infix expression \n");
-        scanf("%s", infix);
-        infix_to_postfix(&s,infix);
-        return 0;
-    }
